@@ -8,5 +8,5 @@ def app(environ, start_response):
    headers = [
       ('Content-Type','text/plain')
    ]
-start_response(status, headers)
-return [body]
+   start_response(status, headers)
+   return [body]
