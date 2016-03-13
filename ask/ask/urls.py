@@ -14,11 +14,11 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    #url(r'^$',''),
-    #url(r'^login/',''),
-    #url(r'^signup/.*$',''),
+    url(r'^$','qa.views.test'),
+    url(r'^login/','qa.views.test'),
+    url(r'^signup/.*$','qa.views.test'),
     url(r'^question/<[0-9]*>','qa.views.test'),
-    #url(r'^ask/.*$',''),
-    #url(r'^popular/',''),
-    #url(r'^new/',''),
+    url(r'^ask/.*$','qa.views.test'),
+    url(r'^popular/','qa.views.test'),
+    url(r'^new/','qa.views.test'),
 )
