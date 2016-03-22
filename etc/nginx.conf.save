@@ -1,0 +1,19 @@
+server {
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      listen *:80;
+      error_log n.error.log info;
+      access_log n.access.log;
+      location ^~ /hello/ {
+         proxy_pass http://0.0.0.0:8080;
+      }
+      location ^~ /uploads/ {
+         root ~/web;
+      }
+      location ~* ^.+\.\w+$ {
+         root ~/web/public;
+      }
+      location / {
+         return 404;
+      }
+}
