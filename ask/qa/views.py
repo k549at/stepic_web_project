@@ -2,6 +2,7 @@ from models import Question
 from django.http import HttpResponse, Http404
 from django.template import Context, loader
 from django.shortcuts import render, render_to_response
+from django.core.paginator import Paginator
 
 def index(request):
     tmp = loader.get_template('index.html')
@@ -11,16 +12,26 @@ def index(request):
 def test(request, *args, **kwargs):
     return HttpResponse('OK');
 
-def main(request, *args, **kwargs):
-    templ = loader.get_template('main.html')
-    context = Context()
-    return HttpResponse(templ.render(context));
+def main(request):
+    questions = Question.objects.all()
+    questions = questions.order_by('-added_at')
+    limit = request.GET.get('limit', 10)
+    page = request.GET.get('page',1)
+    paginator = Paginator(questions, limit)
+    paginator.baseurl = '/?page='
+    page = paginator.page(page)
+    return render(request,'main.html',{'questions': page.object_list, 'paginator': paginator, 'page': page,});
 
 
-def popular(request, *args, **kwargs):
-    templ = loader.get_template('popular.html')
-    context = Context()
-    return HttpResponse(templ.render(context));
+def popular(request):
+    questions = Question.objects.all()
+    questions = questions.order_by('-rating')
+    limit = request.GET.get('limit', 10)
+    page = request.GET.get('page',1)
+    paginator = Paginator(questions, limit)
+    paginator.baseurl = '/popular/?page='
+    page = paginator.page(page)
+    return render(request,'popular.html',{'questions': page.object_list, 'paginator': paginator, 'page': page,});
 
 def question(request, *args, **kwargs):
     templ = loader.get_template('question.html')
