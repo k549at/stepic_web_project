@@ -1,3 +1,4 @@
+sudo /etc/init.d/mysql restart
 mysql -uroot -e "create database if not exists stepic_db"
 mysql -uroot -e "CREATE USER 'box'@'localhost' IDENTIFIED BY 'password';"
 mysql -uroot -e "GRANT ALL PRIVILEGES ON * . * TO 'box'@'localhost';"
