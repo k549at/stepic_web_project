@@ -6,7 +6,7 @@ from django.http import Http404
 class Question(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
-    added_at = models.DateField()
+    added_at = models.DateField(blank=False)
     rating = models.IntegerField()
     author = models.ForeignKey(User)
     likes = models.ManyToManyField(User, related_name='likes_set')
