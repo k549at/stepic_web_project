@@ -14,10 +14,10 @@ class Question(models.Model):
     def __unicode__(self):
         return self.title
     class Meta:
-        ordering = ['-id']
+        ordering = ['-added_at']
     
 class Answer(models.Model):
     text = models.TextField()
-    added_at = models.DateTimeField(auto_now-add=True)
+    added_at = models.DateTimeField(auto_now_add=True)
     question = models.ForeignKey(Question)
     author = models.ForeignKey(User)
