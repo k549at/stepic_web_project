@@ -1,4 +1,5 @@
 from models import Question
+from models import Answer
 from django.http import HttpResponse, Http404
 from django.template import Context, loader
 from django.shortcuts import render, render_to_response
@@ -36,10 +37,14 @@ def popular(request):
 def question(request, *args, **kwargs):
     templ = loader.get_template('question.html')
     context = Context()
-    quest = kwargs['pk']
+    quest_id = kwargs['pk']
     try:
-        question = Question.objects.get(id=quest)
+        question = Question.objects.get(id=quest_id)
+        #answers = Answer.objects.all()
+        answers = question.answer_set.all()
+        answers = answers.values('text')
+        
     except Question.DoesNotExist:
         raise Http404
    # return HttpResponse(templ.render(context));
-    return render(request, 'question.html', {'quest_title': question.title, 'quest_text': question.text})
+    return render(request, 'question.html', {'quest_title': question.title, 'quest_text': question.text, 'answers': answers,})
