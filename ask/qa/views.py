@@ -43,7 +43,7 @@ def popular(request):
     page = paginator.page(page)
     return render(request,'popular.html',{'questions': page.object_list, 'paginator': paginator, 'page': page,});
 
-def question(request, *args, **kwargs):
+def question_old(request, *args, **kwargs):
     quest_id = kwargs['pk']
     try:
         question = Question.objects.get(id=quest_id)
@@ -53,7 +53,16 @@ def question(request, *args, **kwargs):
         raise Http404
     return render(request, 'question_old.html', {'quest_title': question.title, 'quest_text': question.text, 'answers': answers,})
 
-def ask_add(request):
+def question(request):
+    if request.method == "POST":
+        return HttpResponse('OK') 
+    else:
+        form = AskForm()        
+    return render(request, 'ask.html', {'form': form})
+
+
+
+def ask(request):
     if request.method == "POST":
         form=AskForm(request.POST)
         if form.is_valid():
@@ -62,9 +71,9 @@ def ask_add(request):
         return HttpResponseRedirect(redir_url) 
     else:
         form = AskForm()        
-    return render(request, 'ask_add.html', {'form': form})
+    return render(request, 'ask.html', {'form': form})
 
-def answer_add(request, *args, **kwargs):
+def answer(request, *args, **kwargs):
     quest_id = kwargs['pk']
     try:
         question = Question.objects.get(id=quest_id)
