@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+#coding: utf—8
+import sys
 from models import Question
 from models import Answer
 from forms import AskForm
@@ -7,6 +10,9 @@ from django.template import Context, loader
 from django.shortcuts import render, render_to_response
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 def index(request):
     tmp = loader.get_template('index.html')
@@ -64,26 +70,19 @@ def answer_add(request, *args, **kwargs):
         question = Question.objects.get(id=quest_id)
         if request.method == "POST":
             form = AnswerForm(request.POST)
-            #print 'answer add post'
             if form.is_valid():
-                #print "valid"
-#                answer = form.save(commit=False)
-#                answer.question = quest_id
-#                answer.save()
                 form.save()
                 redir_url = '/question/'+str(quest_id)
             return HttpResponseRedirect(redir_url) 
         else:
-#        print 'before form:' + str(quest_id)
-            form = AnswerForm(initial={'question': question})
-
-    
-        print 'forms:'
-        print form
-        #form.question = quest_id
+            form = AnswerForm(initial={'question': question})    
         answers = question.answer_set.all()
-        answers = answers.values('text')        
+        
+#        answers =repr(answers.values('text')).decode("unicode_escape")
+        ans= (answers.values('text'))
+        l=[l['text'] for l in ans]
+        #answers =str(answers).decode('utf8')
+#        print repr(answers).decode("unicode_escape")        
     except Question.DoesNotExist:
         raise Http404
-    print form
-    return render(request, 'question_old.html', {'form': form, 'quest_title': question.title, 'quest_text': question.text, 'answers':answers,})
+    return render(request, 'question_old.html', {'form': form, 'quest_title': question.title, 'quest_text': question.text, 'answers':l,})
