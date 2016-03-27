@@ -43,24 +43,22 @@ def popular(request):
     page = paginator.page(page)
     return render(request,'popular.html',{'questions': page.object_list, 'paginator': paginator, 'page': page,});
 
-def question_old(request, *args, **kwargs):
+def question(request, *args, **kwargs):
     quest_id = kwargs['pk']
-    try:
-        question = Question.objects.get(id=quest_id)
-        answers = question.answer_set.all()
-        answers = answers.values('text')
-    except Question.DoesNotExist:
-        raise Http404
-    return render(request, 'question_old.html', {'quest_title': question.title, 'quest_text': question.text, 'answers': answers,})
-
-def question(request):
     if request.method == "POST":
-        return HttpResponse('OK') 
+        print 'POST on question'
+        return HttpResponse ('OK')
     else:
-        form = AskForm()        
-    return render(request, 'ask.html', {'form': form})
-
-
+        try:
+            question = Question.objects.get(id=quest_id)
+            answers = question.answer_set.all()
+   #         answers = answers.values('text')
+            ans= (answers.values('text'))
+            l=[l['text'] for l in ans]
+            form = AnswerForm(initial={'question': question})
+        except Question.DoesNotExist:
+            raise Http404
+        return render(request, 'question_old.html', {'quest_title': question.title, 'quest_text': question.text, 'answers': l,'form':form,})
 
 def ask(request):
     if request.method == "POST":
