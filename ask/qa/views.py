@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 #coding: utf—8
 import sys
-from models import Question
-from models import Answer
-from forms import AskForm
-from forms import AnswerForm
+from models import Question, Answer
+from forms import AskForm, AnswerForm, SignUpForm, LoginForm
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required 
 from django.http import HttpResponse, Http404
 from django.template import Context, loader
 from django.shortcuts import render, render_to_response
@@ -32,7 +33,6 @@ def main(request):
     page = paginator.page(page)
     return render(request,'main.html',{'questions': page.object_list, 'paginator': paginator, 'page': page,});
 
-
 def popular(request):
     questions = Question.objects.all()
     questions = questions.order_by('-rating')
@@ -43,53 +43,88 @@ def popular(request):
     page = paginator.page(page)
     return render(request,'popular.html',{'questions': page.object_list, 'paginator': paginator, 'page': page,});
 
+@login_required
 def question(request, *args, **kwargs):
     quest_id = kwargs['pk']
     if request.method == "POST":
-        print 'POST on question'
         return HttpResponse ('OK')
     else:
         try:
+            print 'get on question'
             question = Question.objects.get(id=quest_id)
             answers = question.answer_set.all()
-   #         answers = answers.values('text')
             ans= (answers.values('text'))
             l=[l['text'] for l in ans]
-            form = AnswerForm(initial={'question': question})
+            user=request.user
+            form = AnswerForm(initial={'question': question, 'author': user})
         except Question.DoesNotExist:
             raise Http404
         return render(request, 'question_old.html', {'quest_title': question.title, 'quest_text': question.text, 'answers': l,'form':form,})
 
+@login_required
 def ask(request):
     if request.method == "POST":
+        
         form=AskForm(request.POST)
         if form.is_valid():
             question = form.save()
             redir_url = '/question/' + str(question.id)
         return HttpResponseRedirect(redir_url) 
     else:
-        form = AskForm()        
+        user = request.user
+        form = AskForm(initial={'author':user})
     return render(request, 'ask.html', {'form': form})
 
+@login_required
 def answer(request, *args, **kwargs):
     quest_id = kwargs['pk']
-    try:
-        question = Question.objects.get(id=quest_id)
-        if request.method == "POST":
-            form = AnswerForm(request.POST)
-            if form.is_valid():
-                form.save()
-                redir_url = '/question/'+str(quest_id)
-            return HttpResponseRedirect(redir_url) 
-        else:
-            form = AnswerForm(initial={'question': question})    
-        answers = question.answer_set.all()
-        
-#        answers =repr(answers.values('text')).decode("unicode_escape")
-        ans= (answers.values('text'))
-        l=[l['text'] for l in ans]
-        #answers =str(answers).decode('utf8')
-#        print repr(answers).decode("unicode_escape")        
-    except Question.DoesNotExist:
-        raise Http404
+    print 'in answer'
+
+    if request.method == "POST":
+        print 'post on answer'
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            redir_url = '/question/'+str(quest_id)
+        return HttpResponseRedirect(redir_url) 
+    else:
+        print 'get on answer'
+        try:
+            question = Question.objects.get(id=quest_id)
+            print 'from anser'
+            user = request.user
+            print user
+            form = AnswerForm(initial={'question': question, 'author': user})    
+            answers = question.answer_set.all()        
+            ans= (answers.values('text'))
+            l=[l['text'] for l in ans]
+            #answers =str(answers).decode('utf8')
+#               print repr(answers).decode("unicode_escape")        
+        except Question.DoesNotExist:
+            raise Http404
     return render(request, 'question_old.html', {'form': form, 'quest_title': question.title, 'quest_text': question.text, 'answers':l,})
+
+def signup(request):
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(request.POST.get('user'), request.POST.get('email'), request.POST.get('password'))
+            user.save()
+        return HttpResponseRedirect('/main/')
+    else:
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
+
+def login(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = request.POST['user']
+            password = request.POST['password']
+            user = authenticate(username=username, password = password)
+            if user is not None:
+                auth_login(request, user)
+        return HttpResponseRedirect('/main/')
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})

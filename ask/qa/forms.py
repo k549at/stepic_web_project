@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class AskForm(forms.Form):
     title = forms.CharField(max_length=255)
     text = forms.CharField(widget=forms.Textarea)
+    author = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput())
     
     def clean_text(self):
         text = self.cleaned_data['text']
@@ -22,7 +23,7 @@ class AskForm(forms.Form):
 
 class AnswerForm(forms.Form):
     text = forms.CharField(widget=forms.Textarea)
-#    question = forms.IntegerField(widget=forms.HiddenInput())
+    author = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput())
     question = forms.ModelChoiceField(queryset=Question.objects.all(),widget=forms.HiddenInput())
   
     def clean_text(self):
@@ -51,4 +52,11 @@ class AnswerForm(forms.Form):
 #       
         #self.question = int(quest_id)        
 
+class LoginForm(forms.Form):
+    user = forms.CharField(max_length=255)
+    password = forms.CharField(widget=forms.PasswordInput())
 
+class SignUpForm(forms.Form):
+    user = forms.CharField(max_length=255)
+    password = forms.CharField(widget=forms.PasswordInput())
+    email = forms.EmailField()

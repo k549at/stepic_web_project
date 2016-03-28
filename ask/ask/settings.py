@@ -103,6 +103,8 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'ask.urls'
 
+LOGIN_URL = '/login/'
+
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'ask.wsgi.application'
 

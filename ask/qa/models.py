@@ -10,8 +10,8 @@ class Question(models.Model):
     rating = models.IntegerField()
     rating.default = '0'
     author = models.ForeignKey(User)
-    user=User.objects.get(id=1)
-    author.default=user.id
+#    user=User.objects.get(id=1)
+#    author.default=user.id
     likes = models.ManyToManyField(User, related_name='likes_set')
     def __unicode__(self):
         return self.title
@@ -23,5 +23,5 @@ class Answer(models.Model):
     added_at = models.DateTimeField(auto_now_add=True)
     question = models.ForeignKey(Question)
     author = models.ForeignKey(User)
-    user=User.objects.get(id=1)
-    author.default=user.id
+#    user=User.objects.get(id=1)
+#    author.default=user.id
