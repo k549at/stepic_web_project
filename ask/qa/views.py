@@ -71,6 +71,8 @@ def ask(request):
             redir_url = '/question/' + str(question.id)
         return HttpResponseRedirect(redir_url) 
     else:
+        print "============================"
+        print request.user
         user = request.user
         form = AskForm(initial={'author':user})
     return render(request, 'ask.html', {'form': form})
@@ -110,8 +112,14 @@ def signup(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = User.objects.create_user(request.POST.get('user'), request.POST.get('email'), request.POST.get('password'))
+            username = request.POST['username']
+            password = request.POST['password']
+            email = request.POST['email']
+            user = User.objects.create_user(username, email, password)
+            
             user.save()
+            user = authenticate(username=username, password = password)
+            auth_login(request, user)
         return HttpResponseRedirect('/main/')
     else:
         form = SignUpForm()
@@ -121,7 +129,7 @@ def login(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = request.POST['user']
+            username = request.POST['username']
             password = request.POST['password']
             user = authenticate(username=username, password = password)
             if user is not None:

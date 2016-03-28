@@ -113,7 +113,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     '/home/box/web/ask/tmp',
-    '/home/android/web/ask/templ',
+    '/home/box/web/ask/templ',
 )
 
 INSTALLED_APPS = (

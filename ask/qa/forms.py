@@ -53,10 +53,10 @@ class AnswerForm(forms.Form):
         #self.question = int(quest_id)        
 
 class LoginForm(forms.Form):
-    user = forms.CharField(max_length=255)
+    username = forms.CharField(max_length=255)
     password = forms.CharField(widget=forms.PasswordInput())
 
 class SignUpForm(forms.Form):
-    user = forms.CharField(max_length=255)
+    username = forms.CharField(max_length=255)
     password = forms.CharField(widget=forms.PasswordInput())
     email = forms.EmailField()
