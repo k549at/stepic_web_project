@@ -50,7 +50,7 @@ def question(request, *args, **kwargs):
         return HttpResponse ('OK')
     else:
         try:
-            print 'get on question'
+#            print 'get on question'
             question = Question.objects.get(id=quest_id)
             answers = question.answer_set.all()
             ans= (answers.values('text'))
@@ -78,22 +78,24 @@ def ask(request):
 @login_required
 def answer(request, *args, **kwargs):
     quest_id = kwargs['pk']
-    print 'in answer'
+#    print 'in answer'
 
     if request.method == "POST":
-        print 'post on answer'
+#        print 'post on answer'
         form = AnswerForm(request.POST)
         if form.is_valid():
             form.save()
             redir_url = '/question/'+str(quest_id)
+        else:
+            redir_url = '/question/'+str(quest_id)
         return HttpResponseRedirect(redir_url) 
     else:
-        print 'get on answer'
+#        print 'get on answer'
         try:
             question = Question.objects.get(id=quest_id)
-            print 'from anser'
+#            print 'from anser'
             user = request.user
-            print user
+#            print user
             form = AnswerForm(initial={'question': question, 'author': user})    
             answers = question.answer_set.all()        
             ans= (answers.values('text'))
