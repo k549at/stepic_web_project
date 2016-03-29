@@ -64,23 +64,20 @@ def question(request, *args, **kwargs):
 #@login_required
 def ask(request):
     if request.method == "POST":
-#        print "post:"
-#        print request.user
         form=AskForm(request.POST)
-        if request.user.is_authenticated():
-            form._user=request.user
-            if form.is_valid():
-                question = form.save()
-                redir_url = '/question/' + str(question.id)
-                return HttpResponseRedirect(redir_url)
-        else:
-            return HttpResponseRedirect("/login/") 
+        redir_url = '/main/'
+        if form.is_valid():
+            question = form.save()
+            redir_url = '/question/' + str(question.id)
+        return HttpResponseRedirect(redir_url) 
     else:
-#        print "get:"
+#        username = request.POST.get('username')
+#        password = request.POST.get('password')
+#        user = authenticate(username=username, password = password)
+#        if user is None:
+#            user = User.objects.get(id=1)
         form  = AskForm()
-#        form._user=request.user
-#        print form._user
-        form = AskForm(initial={'author':request.user})
+        form = AskForm(initial={'author':user})
     return render(request, 'ask.html', {'form': form})
 
 @login_required
@@ -91,21 +88,20 @@ def answer(request, *args, **kwargs):
     if request.method == "POST":
 #        print 'post on answer'
         form = AnswerForm(request.POST)
-        if request.user.is_authenticated():
-            form._user=request.user
         if form.is_valid():
             form.save()
-            redir_url = '/question/'+str(quest_id)+'/'
-            return HttpResponseRedirect(redir_url) 
+            redir_url = '/question/'+str(quest_id)
+        else:
+            redir_url = '/question/'+str(quest_id)
+        return HttpResponseRedirect(redir_url) 
     else:
 #        print 'get on answer'
         try:
             question = Question.objects.get(id=quest_id)
 #            print 'from anser'
-#            user = request.user
+            user = request.user
 #            print user
-            form=AnswerForm(initial={'question': question})
-#            form = AnswerForm(initial={'question': question, 'author': user})    
+            form = AnswerForm(initial={'question': question, 'author': user})    
             answers = question.answer_set.all()        
             ans= (answers.values('text'))
             l=[l['text'] for l in ans]
