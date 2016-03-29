@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #coding: utf—8
-import sys
+
+#import sys
 from models import Question, Answer
 from forms import AskForm, AnswerForm, SignUpForm, LoginForm
 from django.contrib.auth import authenticate, login as auth_login, logout
