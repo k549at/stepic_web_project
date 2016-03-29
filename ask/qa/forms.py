@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 class AskForm(forms.Form):
     title = forms.CharField(max_length=255)
     text = forms.CharField(widget=forms.Textarea)
-#    author = forms.ModelChoiceField(queryset=User.objects.all())
-    author = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput())
+    author = forms.ModelChoiceField(queryset=User.objects.all())
+#    author = forms.ModelChoiceField(queryset=User.objects.all(),widget=forms.HiddenInput())
     
     def clean_text(self):
         text = self.cleaned_data['text']

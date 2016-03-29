@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #coding: utf—8
 
-#import sys
+import sys
 from models import Question, Answer
 from forms import AskForm, AnswerForm, SignUpForm, LoginForm
 from django.contrib.auth import authenticate, login as auth_login, logout
@@ -65,23 +65,27 @@ def question(request, *args, **kwargs):
 #@login_required
 def ask(request):
     if request.method == "POST":
-#        print "post:"
-#        print request.user
+        print "post:"
+#            print form.author
         form=AskForm(request.POST)
-        if request.user.is_authenticated():
-            form._user=request.user
-            if form.is_valid():
-                question = form.save()
-                redir_url = '/question/' + str(question.id)
-                return HttpResponseRedirect(redir_url)
-        else:
-            return HttpResponseRedirect("/login/") 
+        if form.is_valid():
+            print 'valid'
+            question=form.save()
+            redir_url = '/question/'+str(question.id)
+            return HttpResponseRedirect("/question/"+str(question.id))        
     else:
-#        print "get:"
-        form  = AskForm()
-#        form._user=request.user
+        print "get:"
+       # print request.session['name']
+        form = AskForm()
+        if request.user.is_authenticated():
+           # form.author=request.user
+            us=request.user
+        else:
+            us= User.objects.get(id=1)
+            form.author=User.objects.get(id='1')
+
 #        print form._user
-        form = AskForm(initial={'author':request.user})
+        form = AskForm(initial={'author':us})
     return render(request, 'ask.html', {'form': form})
 
 @login_required
