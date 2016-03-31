@@ -65,16 +65,17 @@ def question(request, *args, **kwargs):
 #@login_required
 def ask(request):
     if request.method == "POST":
-#        print "post:"
-#            print form.author
+        print "post:"
         form=AskForm(request.POST)
+        form.author = 1
+        print form
         if form.is_valid():
-#            print 'valid'
+            print 'valid'
             question=form.save()
             redir_url = '/question/'+str(question.id)
             return HttpResponseRedirect("/question/"+str(question.id))        
     else:
-#        print "get:"
+        print "get:"
        # print request.session['name']
         form = AskForm()
         if request.user.is_authenticated():
@@ -84,8 +85,8 @@ def ask(request):
             us= User.objects.get(id=1)
             form.author=User.objects.get(id='1')
 
-#        print form._user
         form = AskForm(initial={'author':us})
+        print form
     return render(request, 'ask.html', {'form': form})
 
 @login_required
