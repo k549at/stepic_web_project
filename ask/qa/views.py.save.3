@@ -27,7 +27,7 @@ def test(request, *args, **kwargs):
 def main(request):
     questions = Question.objects.all()
     questions = questions.order_by('-added_at')
-    limit = request.GET.get('limit', 20)
+    limit = request.GET.get('limit', 10)
     page = request.GET.get('page',1)
     paginator = Paginator(questions, limit)
     paginator.baseurl = '/?page='
@@ -65,27 +65,40 @@ def question(request, *args, **kwargs):
 #@login_required
 def ask(request):
     if request.method == "POST":
-#        print "post:"
+        print "post:"
 #            print form.author
         form=AskForm(request.POST)
+       # if not request.user.is_authenticated():
+           # form._author=request.user
+          #  if form.is_valid():
+          #      print "valid"
+          #      question = form.save()
+          #      redir_url = '/question/' + str(question.id)
+          #      return HttpResponseRedirect(redir_url)
+        #    us=User.objects.get(username=request.user)
+        #    if us:
+        #        newUser = us
+        #    else:
+        #        newUser=User.objects.create_user(request.user)
+        #        newUser.save()
+        #    form.author=newUser
+        #    print form.author
         if form.is_valid():
-#            print 'valid'
+            print 'valid'
             question=form.save()
             redir_url = '/question/'+str(question.id)
             return HttpResponseRedirect("/question/"+str(question.id))        
     else:
-#        print "get:"
+        print "get:"
        # print request.session['name']
         form = AskForm()
-        if request.user.is_authenticated():
-           # form.author=request.user
-            us=request.user
+        if request.user.is_authaticated():
+            form.author=request.user
         else:
-            us= User.objects.get(id=1)
-            form.author=User.objects.get(id='1')
-
+            user = User.objects.get(id=1)
+            form.author=user
 #        print form._user
-        form = AskForm(initial={'author':us})
+#        form = AskForm(initial={'author':request.user})
     return render(request, 'ask.html', {'form': form})
 
 @login_required

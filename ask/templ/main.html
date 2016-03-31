@@ -1,5 +1,17 @@
+<div align = "right">Current user: {{user}}</div>
+<div>
+     <a href = /login/>Login</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     <a href = /logout/>Logout</a>&nbsp;&nbsp;&nbsp;&nbsp;
+     <a href = /signup/>Signup</a>
+</div>
+<div>
+     <a href = /ask/>Ask a question</a>
+</div>
+
+============================================================
+<br>
 {% for quest in questions %}
-  <a href = /question/{{quest.pk}}> {{ quest }}
+  <a href = /question/{{quest.pk}}> {{ quest }} (author:{{quest.author}})
   <br>
 {% endfor %}
 
